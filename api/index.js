@@ -18,11 +18,15 @@ const mongoUri = process.env.MONGO_URI;
 if (!mongoUri) {
   console.error('❌ MONGO_URI is not set in environment variables');
 } else {
+  console.log('🔑 MONGO_URI is set (not printing for security)…');
+
+  // Let Mongoose buffer commands until initial connection completes
   mongoose
     .connect(mongoUri)
     .then(() => {
-      console.log('✅ MongoDB Connected...');
-      console.log('DB name:', mongoose.connection.name);
+      console.log('✅ MongoDB Connected');
+      console.log('   DB name:', mongoose.connection.name);
+      console.log('   Host:', mongoose.connection.host);
     })
     .catch((err) => {
       console.error('❌ MongoDB connection error:', err);
@@ -56,4 +60,5 @@ if (require.main === module) {
   });
 }
 
+// Export Express app for Vercel
 module.exports = app;
