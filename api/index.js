@@ -34,7 +34,6 @@ if (!mongoUri) {
 // ---------------------
 const productRoutes = require('./routes/products');
 const authRoutes = require('./routes/auth');
-const cartRoutes = require('./routes/cart');
 const checkoutRoutes = require('./routes/checkout');
 const ordersRoutes = require('./routes/orders');
 const recommendationsRoutes = require('./routes/recommendations');
@@ -45,12 +44,11 @@ app.get('/api/health', (req, res) => {
 
 app.use('/api/products', productRoutes);
 app.use('/api/auth', authRoutes);
-app.use('/api/cart', cartRoutes);
 app.use('/api/checkout', checkoutRoutes);
 app.use('/api/orders', ordersRoutes);
 app.use('/api/recommendations', recommendationsRoutes);
 
-// Local dev server
+// Local dev only
 if (require.main === module) {
   const PORT = process.env.PORT || 5000;
   app.listen(PORT, () => {
@@ -58,5 +56,4 @@ if (require.main === module) {
   });
 }
 
-// Export for Vercel
 module.exports = app;
