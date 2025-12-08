@@ -4,24 +4,34 @@ const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const cors = require('cors');
 
-// Load .env in local dev (Vercel uses its own env)
 dotenv.config();
 
 const app = express();
 app.use(express.json());
 app.use(cors());
 
-// --- MongoDB connection ---
-mongoose
-  .connect(process.env.MONGO_URI)
-  .then(() => {
-    console.log('MongoDB Connected...');
-  })
-  .catch((err) => {
-    console.error('Mongo connection error:', err);
-  });
+// ---------------------
+// MongoDB connection
+// ---------------------
+const mongoUri = process.env.MONGO_URI;
 
-// --- Routes ---
+if (!mongoUri) {
+  console.error('❌ MONGO_URI is not set in environment variables');
+} else {
+  mongoose
+    .connect(mongoUri)
+    .then(() => {
+      console.log('✅ MongoDB Connected...');
+      console.log('DB name:', mongoose.connection.name);
+    })
+    .catch((err) => {
+      console.error('❌ MongoDB connection error:', err);
+    });
+}
+
+// ---------------------
+// Routes
+// ---------------------
 const productRoutes = require('./routes/products');
 const authRoutes = require('./routes/auth');
 const cartRoutes = require('./routes/cart');
@@ -40,7 +50,7 @@ app.use('/api/checkout', checkoutRoutes);
 app.use('/api/orders', ordersRoutes);
 app.use('/api/recommendations', recommendationsRoutes);
 
-// ✅ Local dev: run a server
+// Local dev server
 if (require.main === module) {
   const PORT = process.env.PORT || 5000;
   app.listen(PORT, () => {
@@ -48,5 +58,5 @@ if (require.main === module) {
   });
 }
 
-// ✅ Vercel: export the Express app
+// Export for Vercel
 module.exports = app;
